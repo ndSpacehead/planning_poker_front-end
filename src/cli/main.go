@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"os"
 
 	"golang.org/x/net/websocket"
 
@@ -19,11 +21,29 @@ func main() {
 		return
 	}
 
+	scanner := bufio.NewScanner(os.Stdin)
+
 	fmt.Print("My name is: ")
 	var name string
-	fmt.Scanln(&name)
+	if scanner.Scan() {
+		name = scanner.Text()
+	}
+
+	fmt.Println("Type ':q' for exit")
 
 	client := engine.NewClient(ws, name)
+	go client.Listen()
 
-	ws.Close()
+	var text string
+	for {
+		if scanner.Scan() {
+			text = scanner.Text()
+			if text == ":q" {
+				ws.Close()
+				break
+			} else if text != "" {
+				client.Say(text)
+			}
+		}
+	}
 }
