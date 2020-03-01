@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"golang.org/x/net/websocket"
+
+	"./engine"
 )
 
 var origin = "http://localhost/"
@@ -15,4 +18,12 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+
+	fmt.Print("My name is: ")
+	var name string
+	fmt.Scanln(&name)
+
+	client := engine.NewClient(ws, name)
+
+	ws.Close()
 }
